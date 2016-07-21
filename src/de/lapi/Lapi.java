@@ -110,7 +110,7 @@ public class Lapi {
 
 	private String generateKey(Class<?> mainClass, Class<?> objectClass,
 			String extension) {
-		String out = mainClass.getName() + "." + objectClass.getName() + "."
+		String out = mainClass.getSimpleName() + "." + objectClass.getSimpleName() + "."
 				+ extension;
 		System.out.println(out);
 		return out;

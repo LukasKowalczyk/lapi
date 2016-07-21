@@ -2,7 +2,6 @@ package de.lapi;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -10,7 +9,6 @@ import java.util.Map;
 
 import javax.xml.bind.JAXB;
 
-import de.lapi.comparator.TextElementComparator;
 import de.lapi.container.LanguageText;
 import de.lapi.container.TextElement;
 
@@ -81,18 +79,6 @@ public class Lapi {
 		return findText(id, out);
 	}
 
-	public String getText(Locale local, Class<?> mainClass, String name) {
-		List<TextElement> out = textLanguages.get(local.getISO3Language());
-		String id = generateKey(mainClass, name);
-		return findText(id, out);
-	}
-
-	public String getText(Class<?> mainClass, String name) {
-		List<TextElement> out = textLanguages.get(defaultLocation.getISO3Language());
-		String id = generateKey(mainClass, name);
-		return findText(id, out);
-	}
-
 	public String getText(String id) {
 		List<TextElement> out = textLanguages.get(defaultLocation
 				.getISO3Language());
@@ -106,11 +92,6 @@ public class Lapi {
 			}
 		}
 		return "##Text not found##";
-	}
-
-	private String generateKey(Class<?> mainClass, String extension) {
-		String out = mainClass.getSimpleName() + "." + extension;
-		return out;
 	}
 
 	public boolean isLanguageTextGenerated(Locale local) {

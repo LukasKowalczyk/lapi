@@ -17,6 +17,8 @@ import de.lapi.container.TextElement;
 public class Lapi {
 	private Map<String, List<TextElement>> textLanguages = new HashMap<String, List<TextElement>>();
 
+	private static String quellOrdner = null;
+
 	private static Lapi lapi = null;
 
 	private Lapi() {
@@ -30,20 +32,33 @@ public class Lapi {
 		return lapi;
 	}
 
+	public static Lapi getInstance(String quellOrdner) {
+		Lapi.quellOrdner = quellOrdner;
+		if (lapi == null) {
+			lapi = new Lapi();
+		}
+		return lapi;
+	}
+
 	public void generateLanguageText(Locale local) {
 		try {
 			if (textLanguages.containsKey(local.getISO3Language())) {
 				return;
 			}
-			File file = new File(local.getISO3Language() + ".xml");
-			if (!file.exists()) {
-				file.createNewFile();
-			}
+			File file = loadFile(local);
 			LanguageText lt = JAXB.unmarshal(file, LanguageText.class);
 			textLanguages.put(local.getISO3Language(), lt.getTextElements());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private File loadFile(Locale local) throws IOException {
+		File file = new File(quellOrdner, local.getISO3Language() + ".xml");
+		if (!file.exists()) {
+			file.createNewFile();
+		}
+		return file;
 	}
 
 	public void generateDefaultLanguageText() {
@@ -52,10 +67,7 @@ public class Lapi {
 			if (textLanguages.containsKey(local.getISO3Language())) {
 				return;
 			}
-			File file = new File(local.getISO3Language() + ".xml");
-			if (!file.exists()) {
-				file.createNewFile();
-			}
+			File file = loadFile(local);
 			LanguageText lt = JAXB.unmarshal(file, LanguageText.class);
 			textLanguages.put(local.getISO3Language(), lt.getTextElements());
 		} catch (IOException e) {
@@ -110,5 +122,13 @@ public class Lapi {
 	public void reinitLanguageText(Locale local) {
 		textLanguages.remove(local.getISO3Language());
 		generateLanguageText(local);
+	}
+
+	public static String getQuellOrdner() {
+		return quellOrdner;
+	}
+
+	public static void setQuellOrdner(String quellOrdner) {
+		Lapi.quellOrdner = quellOrdner;
 	}
 }

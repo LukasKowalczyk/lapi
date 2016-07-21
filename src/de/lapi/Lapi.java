@@ -15,19 +15,18 @@ import de.lapi.container.LanguageText;
 import de.lapi.container.TextElement;
 
 public class Lapi {
-	private static Map<String, List<TextElement>> textLanguages = new HashMap<String, List<TextElement>>();
+	private Map<String, List<TextElement>> textLanguages = new HashMap<String, List<TextElement>>();
 
 	private static Lapi lapi = null;
 
 	private Lapi() {
-
+		generateDefaultLanguageText();
 	}
 
 	public static Lapi getInstance() {
 		if (lapi == null) {
 			lapi = new Lapi();
 		}
-		lapi.generateDefaultLanguageText();
 		return lapi;
 	}
 
@@ -73,6 +72,15 @@ public class Lapi {
 
 	public String getText(Locale local, Class<?> mainClass,
 			Class<?> objectClass, String name) {
+		List<TextElement> out = textLanguages.get(local.getISO3Language());
+		String id = generateKey(mainClass, objectClass, name);
+		int erg = Collections.binarySearch(out, new TextElement(id, ""),
+				new TextElementComparator());
+		return out.get(erg).getText();
+	}
+
+	public String getText(Class<?> mainClass, Class<?> objectClass, String name) {
+		Locale local = Locale.getDefault();
 		List<TextElement> out = textLanguages.get(local.getISO3Language());
 		String id = generateKey(mainClass, objectClass, name);
 		int erg = Collections.binarySearch(out, new TextElement(id, ""),

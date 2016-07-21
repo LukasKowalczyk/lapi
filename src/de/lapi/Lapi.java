@@ -77,42 +77,42 @@ public class Lapi {
 
 	public String getText(Locale local, String id) {
 		List<TextElement> out = textLanguages.get(local.getISO3Language());
-		int erg = Collections.binarySearch(out, new TextElement(id, ""),
-				new TextElementComparator());
-		return out.get(erg).getText();
+		return findText(id, out);
 	}
 
 	public String getText(Locale local, Class<?> mainClass,
 			Class<?> objectClass, String name) {
 		List<TextElement> out = textLanguages.get(local.getISO3Language());
 		String id = generateKey(mainClass, objectClass, name);
-		int erg = Collections.binarySearch(out, new TextElement(id, ""),
-				new TextElementComparator());
-		return out.get(erg).getText();
+		return findText(id, out);
 	}
 
 	public String getText(Class<?> mainClass, Class<?> objectClass, String name) {
 		Locale local = Locale.getDefault();
 		List<TextElement> out = textLanguages.get(local.getISO3Language());
 		String id = generateKey(mainClass, objectClass, name);
-		int erg = Collections.binarySearch(out, new TextElement(id, ""),
-				new TextElementComparator());
-		return out.get(erg).getText();
+		return findText(id, out);
 	}
 
 	public String getText(String id) {
 		List<TextElement> out = textLanguages.get(Locale.getDefault()
 				.getISO3Language());
-		int erg = Collections.binarySearch(out, new TextElement(id, ""),
-				new TextElementComparator());
-		return out.get(erg).getText();
+		return findText(id, out);
+	}
+
+	private String findText(String id, List<TextElement> out) {
+		for (TextElement textElement : out) {
+			if(textElement.getId().equals(id)){
+				return textElement.getText();
+			}
+		}
+		return "##Text not found##";
 	}
 
 	private String generateKey(Class<?> mainClass, Class<?> objectClass,
 			String extension) {
-		String out = mainClass.getSimpleName() + "." + objectClass.getSimpleName() + "."
-				+ extension;
-		System.out.println(out);
+		String out = mainClass.getSimpleName() + "."
+				+ objectClass.getSimpleName() + "." + extension;
 		return out;
 	}
 

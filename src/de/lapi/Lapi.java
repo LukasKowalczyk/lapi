@@ -27,11 +27,32 @@ public class Lapi {
 		if (lapi == null) {
 			lapi = new Lapi();
 		}
+		lapi.generateDefaultLanguageText();
 		return lapi;
 	}
 
 	public void generateLanguageText(Locale local) {
 		try {
+			if (textLanguages.containsKey(local.getISO3Language())) {
+				return;
+			}
+			File file = new File(local.getISO3Language() + ".xml");
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+			LanguageText lt = JAXB.unmarshal(file, LanguageText.class);
+			textLanguages.put(local.getISO3Language(), lt.getTextElements());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void generateDefaultLanguageText() {
+		try {
+			Locale local = Locale.getDefault();
+			if (textLanguages.containsKey(local.getISO3Language())) {
+				return;
+			}
 			File file = new File(local.getISO3Language() + ".xml");
 			if (!file.exists()) {
 				file.createNewFile();
@@ -50,7 +71,16 @@ public class Lapi {
 		return out.get(erg).getText();
 	}
 
-	public String getTextByDefaultLanguage(String id) {
+	public String getText(Locale local, Class<?> mainClass,
+			Class<?> objectClass, String name) {
+		List<TextElement> out = textLanguages.get(local.getISO3Language());
+		String id = generateKey(mainClass, objectClass, name);
+		int erg = Collections.binarySearch(out, new TextElement(id, ""),
+				new TextElementComparator());
+		return out.get(erg).getText();
+	}
+
+	public String getText(String id) {
 		List<TextElement> out = textLanguages.get(Locale.getDefault()
 				.getISO3Language());
 		int erg = Collections.binarySearch(out, new TextElement(id, ""),
@@ -58,14 +88,10 @@ public class Lapi {
 		return out.get(erg).getText();
 	}
 
-	public String generateKey(Class<?> mainClass, Object o) {
-
-		String out = mainClass.getName() + "." + o.getClass().getName();
-		return out;
-	}
-
-	public String generateKey(Class<?> mainClass, Class<?> objectClass, String extension) {
-		String out = mainClass.getName() + "." + objectClass.getName()+"." + extension;
+	private String generateKey(Class<?> mainClass, Class<?> objectClass,
+			String extension) {
+		String out = mainClass.getName() + "." + objectClass.getName() + "."
+				+ extension;
 		return out;
 	}
 

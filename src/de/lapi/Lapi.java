@@ -112,6 +112,7 @@ public class Lapi {
 			String extension) {
 		String out = mainClass.getName() + "." + objectClass.getName() + "."
 				+ extension;
+		System.out.println(out);
 		return out;
 	}
 

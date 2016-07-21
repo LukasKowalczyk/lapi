@@ -2,7 +2,6 @@ package de.lapi;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -10,8 +9,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.xml.bind.JAXB;
-
-import com.sun.xml.internal.ws.util.StringUtils;
 
 import de.lapi.comparator.TextElementComparator;
 import de.lapi.container.LanguageText;
